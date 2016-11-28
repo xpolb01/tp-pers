@@ -19,8 +19,17 @@ var tripModule = (function () {
 
   // application state
 
-  var days = [],
-      currentDay;
+    let days = $.get('/api/days')
+    .then( days => {
+      console.log(days);
+      days.forEach( day => {
+        dayModule.create(day);
+      });
+      return days;
+    });
+
+
+    var  currentDay;
 
   // jQuery selections
 
@@ -46,28 +55,36 @@ var tripModule = (function () {
   });
 
   function addDay () {
-    if (this && this.blur) this.blur(); // removes focus box from buttons
-    var newDay = dayModule.create({ number: days.length + 1 }); // dayModule
-    days.push(newDay);
-    if (days.length === 1) {
-      currentDay = newDay;
-    }
-    switchTo(newDay);
+    $.post('/api/days/addDay')
+    .then( addedDay => {
+      console.log('I just created a new')
+      if (this && this.blur) this.blur(); // removes focus box from buttons
+        var newDay = dayModule.create(addedDay); // dayModule
+        switchTo(newDay);
+    });
   }
 
   function deleteCurrentDay () {
     // prevent deleting last day
-    if (days.length < 2 || !currentDay) return;
-    // remove from the collection
-    var index = days.indexOf(currentDay),
-      previousDay = days.splice(index, 1)[0],
-      newCurrent = days[index] || days[index - 1];
-    // fix the remaining day numbers
-    days.forEach(function (day, i) {
-      day.setNumber(i + 1);
+    $.ajax({
+      url: '/api/days/delete/' + days.indexOf(currentDay),
+      type: 'DELETE'
+    })
+    .then( deletedDay => {
+        console.log(deletedDay);
+        console.log(days);
+        if (days.length < 2 || !currentDay) return;
+        // remove from the collection
+        var index = days.indexOf(currentDay),
+          previousDay = days.splice(index, 1)[0],
+          newCurrent = days[index] || days[index - 1];
+        // fix the remaining day numbers
+        days.forEach(function (day, i) {
+          day.setNumber(i + 1);
+        });
+        switchTo(newCurrent);
+        previousDay.hideButton();
     });
-    switchTo(newCurrent);
-    previousDay.hideButton();
   }
 
   // globally accessible module methods
@@ -75,7 +92,9 @@ var tripModule = (function () {
   var publicAPI = {
 
     load: function () {
-      $(addDay);
+      if (days.length === 0){
+        $(addDay);
+      }
     },
 
     switchTo: switchTo,

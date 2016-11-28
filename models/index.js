@@ -17,4 +17,7 @@ Day.belongsToMany(Restaurant, {through: 'RestaurantOnDay'});
 Activity.belongsToMany(Day, {through: 'ActivityOnDay'});
 Day.belongsToMany(Activity, {through: 'ActivityOnDay'});
 
+Day.belongsToMany(Place, {through: 'PlaceOnDay'});
+Place.belongsToMany(Day, {through: 'PlaceOnDay'});
+
 module.exports = db;

@@ -20,4 +20,27 @@ router.post('/addDay', (req, res, next) => {
   .catch(utils.errLog);
 });
 
+router.get('/:id', (req, res, next) => {
+  Day.findOne({where: {
+    number: req.params.id
+  }})
+  .then( specificDay => {
+    res.send(specificDay);
+  })
+  .catch(utils.errLog)
+});
+
+router.delete('/delete/:id', (req, res, next) => {
+  Day.destroy({
+    where: {
+      number: req.params.id
+    }
+  })
+  .then( removedDay => {
+    res.send('Successfully deleted');
+  })
+  .catch(utils.errLog)
+});
+
+
 module.exports = router;

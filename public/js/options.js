@@ -16,7 +16,9 @@ $(function(){
   var $hotelSelect = $optionsPanel.find('#hotel-choices');
   var $restaurantSelect = $optionsPanel.find('#restaurant-choices');
   var $activitySelect = $optionsPanel.find('#activity-choices');
-
+  // var hotels;
+  // var restaurants;
+  // var activities;
   // make all the option tags (second arg of `forEach` is a `this` binding)
   $.get('/api/hotels')
   .then((hotels) => {
