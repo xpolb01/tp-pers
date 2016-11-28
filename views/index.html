@@ -81,11 +81,4 @@
     </div>
   </div>
 </div>
-<script>
-  {% autoescape false %}
-  var hotels = {{ templateHotels | json }};
-  var restaurants = {{ templateRestaurants | json }};
-  var activities = {{ templateActivities | json }};
-  {% endautoescape %}
-</script>
 {% endblock %}
