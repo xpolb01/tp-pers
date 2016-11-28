@@ -18,18 +18,9 @@
 var tripModule = (function () {
 
   // application state
+  var currentDay;
 
-    let days = $.get('/api/days')
-    .then( days => {
-      console.log(days);
-      days.forEach( day => {
-        dayModule.create(day);
-      });
-      return days;
-    });
-
-
-    var  currentDay;
+  const days = [];
 
   // jQuery selections
 
@@ -66,24 +57,25 @@ var tripModule = (function () {
 
   function deleteCurrentDay () {
     // prevent deleting last day
+    console.log('CURRENT DAY', currentDay);
     $.ajax({
-      url: '/api/days/delete/' + days.indexOf(currentDay),
+      url: '/api/days/delete/' + currentDay.number,
       type: 'DELETE'
     })
     .then( deletedDay => {
-        console.log(deletedDay);
-        console.log(days);
-        if (days.length < 2 || !currentDay) return;
-        // remove from the collection
-        var index = days.indexOf(currentDay),
-          previousDay = days.splice(index, 1)[0],
-          newCurrent = days[index] || days[index - 1];
-        // fix the remaining day numbers
-        days.forEach(function (day, i) {
-          day.setNumber(i + 1);
-        });
-        switchTo(newCurrent);
-        previousDay.hideButton();
+      // console.log(days);
+      if (days.length < 2 || !currentDay) return;
+      // remove from the collection
+      var index = days.indexOf(currentDay),
+      previousDay = days.splice(index, 1)[0],
+      newCurrent = days[index] || days[index - 1];
+      // fix the remaining day numbers
+      days.forEach(function (day, i) {
+        // console.log('DAY', day);
+        day.setNumber(i + 1);
+      });
+      switchTo(newCurrent);
+      previousDay.hideButton();
     });
   }
 
@@ -92,9 +84,20 @@ var tripModule = (function () {
   var publicAPI = {
 
     load: function () {
-      if (days.length === 0){
-        $(addDay);
-      }
+      $.get('/api/days')
+      .then( allDays => {
+        // console.log(days);
+        allDays.forEach( day => {
+          days.push(dayModule.create(day));
+        });
+        // dayModule.show.call(allDays[0]);
+        // return days;
+        if (days.length === 0) {
+          addDay();
+        } else {
+          switchTo(days[0]);
+        }
+      });
     },
 
     switchTo: switchTo,

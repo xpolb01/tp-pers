@@ -27,16 +27,39 @@ router.get('/:id', (req, res, next) => {
   .then( specificDay => {
     res.send(specificDay);
   })
-  .catch(utils.errLog)
+  .catch(utils.errLog);
 });
 
 router.delete('/delete/:id', (req, res, next) => {
-  Day.destroy({
+  Day.findOne({
     where: {
       number: req.params.id
     }
   })
-  .then( removedDay => {
+  // Day.findAll({})
+  // .then(allDays => {
+  //   if (allDays.length < 2) {
+  //     throw new Error('Can\'t delete the last day');
+  //   }
+  //   return allDays
+  // })
+  // .then((allDays) => {
+  //   Day.destroy({
+  //     where: {
+  //       number: req.params.id
+  //     }
+  //   });
+  //   return allDays
+  // })
+  .then(day => {
+    return day.destroy();
+  //   for (var i = req.params.id + 1; i <= allDays.length; i++) {
+  //     let day = allDays[i];
+  //     console.log('DAY', day);
+  //     day.decrement('number');
+  //   }
+  })
+  .then(() => {
     res.send('Successfully deleted');
   })
   .catch(utils.errLog)

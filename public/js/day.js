@@ -135,7 +135,11 @@ var dayModule = (function () {
 
     create: function (databaseDay) {
       return new Day(databaseDay);
-    }
+    },
+
+    show: Day.prototype.show,
+
+    hide: Day.prototype.hide
 
   };
 
